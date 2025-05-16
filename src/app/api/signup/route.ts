@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { UserSchema } from '@/app/utils/validatedModels/user'
-import prisma from '@/app/lib/prisma_client'
-import { findUserExists } from '@/app/utils/dbqueries/UserQueries'
+import { findUserExists, insertUser } from '@/app/utils/dbqueries/UserQueries'
 
 async function getformData(params: NextRequest) {
   const formdata = await params.formData()
@@ -38,20 +36,8 @@ export async function POST(request: NextRequest) {
 
   // Hash the password
   const hashedPassword = await bcrypt.hash(parsed.data.password, 10)
+  // Insert the user into the database
+  const newUser = await insertUser({...parsed.data,password: hashedPassword})
 
-  const user = await prisma.user.create({
-    data: {
-      full_name: parsed.data.full_name,
-      email: parsed.data.email,
-      password: hashedPassword,
-      contact: parsed.data.contact,
-      blood_group: parsed.data.blood_group, // already mapped to Prisma enum
-      location: parsed.data.location,
-      role: parsed.data.role,
-      available_to_donate: parsed.data.available_to_donate,
-      last_donated_at: parsed.data.last_donated_at,
-    },
-  })
-
-  return NextResponse.json({ message: 'User created successfully', user }, { status: 201 })
+  return NextResponse.json({ message: 'User created successfully', user: newUser }, { status: 201 })
 }

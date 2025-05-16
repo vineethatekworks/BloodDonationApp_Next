@@ -13,20 +13,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id                    String @id @default(uuid())
-  full_name             String
-  email                 String  @unique
-  password              String
-  contact               String?
-  blood_group           BloodGroup?
-  location              String?
-  role                  Role    @default(DONOR)
-  available_to_donate   Boolean @default(false)
-  last_donated_at       DateTime?
-  Created_at            DateTime @default(now())
-  updated_at            DateTime @updatedAt
+model UserProfile {
+  id                  String     @id @default(uuid())
+  full_name           String
+  email               String     @unique
+  password            String
+  contact             String?
+  blood_group         BloodGroup?
+  location            String?
+  available_to_donate Boolean    @default(false)
+  last_donated_at     DateTime?
+  created_at          DateTime   @default(now())
+  updated_at          DateTime   @updatedAt
+
+  // Only define the relation field, **without** fields and references here
+  auth                UserAuth?  @relation
+  @@map("user_profile")
 }
+
+model UserAuth {
+  user_id                 String   @id
+  isVerified              Boolean  @default(false)
+  role                    Role     @default(DONOR)
+  verifytoken             String?  
+  verifytokenexpiry       DateTime?
+  forgotpasswordtoken     String?
+  forgotpasswordtokenexpiry DateTime?
+
+  // Foreign key relation
+  userProfile             UserProfile @relation(fields: [user_id], references: [id])
+
+  @@map("user_auth")
+}
+
 
 enum BloodGroup {
   A_POS  @map("A+")
