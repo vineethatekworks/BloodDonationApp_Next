@@ -1,8 +1,17 @@
+import bcryptjs from 'bcryptjs';
 import nodemailer from 'nodemailer';
+import prisma from './prisma_client';
+import { updateforgotPasswordToken, InsertUserAuthVerifyToken } from '../utils/dbqueries/UserAuthQueries';
 
-
-export const sendEmail = async ({ email, emailType, userId }: any) => {
+export async function sendEmail({ email, emailType, userId }: any) {
     {
+        const HashToken = await bcryptjs.hash(userId.toString(), 10);
+        if(emailType === 'VERIFY') {
+           await InsertUserAuthVerifyToken(userId, HashToken);
+        }
+        else if(emailType === 'RESET') {
+              await updateforgotPasswordToken(userId, HashToken);
+        }
         try {
             const transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',

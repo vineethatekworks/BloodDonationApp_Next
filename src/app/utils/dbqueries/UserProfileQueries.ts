@@ -3,7 +3,7 @@ import { BloodGroup, Role } from "@prisma/client";
 
 //Query to find user by email
 export async function findUserExists(email: string) {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.userProfile.findUnique({
     where: {
       email,
     },
@@ -12,7 +12,7 @@ export async function findUserExists(email: string) {
 }
 
 //Query to insert user
-export async function insertUser(
+export async function insertUserProfile(
   userData: {
     full_name: string;
     email: string;
@@ -20,12 +20,11 @@ export async function insertUser(
     contact: string;
     blood_group?: BloodGroup;
     location?: string;
-    role: Role;
     available_to_donate?: boolean;
     last_donated_at?: Date | null;
   },
 ) {
-  const user = await prisma.user.create({
+  const user = await prisma.userProfile.create({
     data: { ...userData },
   });
   return user;

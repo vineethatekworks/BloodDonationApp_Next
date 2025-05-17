@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { findUserExists, insertUser } from '@/app/utils/dbqueries/UserQueries'
+import { findUserExists, insertUserProfile } from '@/app/utils/dbqueries/UserProfileQueries'
+import { UserProfileSchema } from '@/app/utils/validatedModels/userProfile'
+import { sendEmail } from '@/app/lib/mailer'
 
 async function getformData(params: NextRequest) {
   const formdata = await params.formData()
@@ -22,7 +24,7 @@ export async function POST(request: NextRequest) {
   const userData = await getformData(request)
 
   // Validate the user data using Zod
-  const parsed = UserSchema.safeParse(userData)
+  const parsed = UserProfileSchema.safeParse(userData)
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.format() }, { status: 400 })
   }
@@ -37,7 +39,12 @@ export async function POST(request: NextRequest) {
   // Hash the password
   const hashedPassword = await bcrypt.hash(parsed.data.password, 10)
   // Insert the user into the database
-  const newUser = await insertUser({...parsed.data,password: hashedPassword})
+  const newUser = await insertUserProfile({...parsed.data,password: hashedPassword})
+  if (!newUser) {
+    return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
+  }
+
+  await sendEmail({ email: newUser.email, emailType: "VERIFY", userId: newUser.id })
 
   return NextResponse.json({ message: 'User created successfully', user: newUser }, { status: 201 })
 }
