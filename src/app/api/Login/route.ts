@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/lib/prisma_client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { stat } from "fs";
 
 
 
