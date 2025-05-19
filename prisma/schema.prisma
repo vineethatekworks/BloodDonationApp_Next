@@ -21,6 +21,7 @@ model UserProfile {
   contact             String?
   blood_group         BloodGroup?
   location            String?
+  role                Role     @default(DONOR)
   available_to_donate Boolean    @default(false)
   last_donated_at     DateTime?
   created_at          DateTime   @default(now())
