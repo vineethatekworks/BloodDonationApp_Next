@@ -29,3 +29,13 @@ export async function insertUserProfile(
   });
   return user;
 }
+
+//Query to find user by id
+export async function findUserById(id: string) {
+  const user = await prisma.userProfile.findUnique({
+    where: {
+      id,
+    },
+  });
+  return user;
+}

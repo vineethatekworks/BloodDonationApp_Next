@@ -29,6 +29,40 @@ export async function updateforgotPasswordToken(userId: string, HashToken: strin
    return true;
 }
 
+
+//verify token
+export async function verifyToken(token: string) {
+    const result = await prisma.userAuth.findFirst({
+        where: {
+            verifytoken: token,
+            verifytokenexpiry: {
+                gte: new Date()
+            }
+        }
+    });
+    if (!result) {
+        throw new Error("Invalid or expired token");
+    }
+    return result.user_id;
+}
+
+// verify token and update user
+export async function verifyTokenAndUpdateUser(user_id: string) {
+    const result = await prisma.userAuth.update({
+        where: {
+            user_id: user_id
+        },
+        data: {
+            isVerified: true,
+            verifytoken: null,
+            verifytokenexpiry: null
+        }
+    });
+    return result;
+}
+
+
+
 //getdata from token
 export async function getUserDataFromToken(req: NextRequest) {
    try {
@@ -45,3 +79,4 @@ export async function getUserDataFromToken(req: NextRequest) {
       throw new Error("Error in getting user data from token");
    }
 }
+
