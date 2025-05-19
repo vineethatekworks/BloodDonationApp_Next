@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/app/lib/prisma_client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { findUserExists } from "@/app/utils/dbqueries/UserProfileQueries";
 
 
 
@@ -11,11 +11,7 @@ export async function POST(request: NextRequest) {
         const { email, password } = body;
         console.log(email, password);
 
-        const user = await prisma.userProfile.findFirst({
-            where: {
-                email: email,
-            },
-        });
+        const user = await findUserExists(email);
         console.log(user);
 
         if (!user) {
@@ -37,7 +33,7 @@ export async function POST(request: NextRequest) {
             email: user.email,
         };
 
-        const token = await jwt.sign(tokendata, process.env.JWT_SECRET!, {
+        const token = jwt.sign(tokendata, process.env.JWT_SECRET!, {
             expiresIn: "1d"
         });
 

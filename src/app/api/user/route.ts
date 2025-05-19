@@ -1,6 +1,6 @@
 import { getUserDataFromToken } from "@/app/utils/dbqueries/UserAuthQueries";
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/app/lib/prisma_client";
+import { findUserById } from "@/app/utils/dbqueries/UserProfileQueries";
 
 
 
@@ -9,11 +9,7 @@ export async function POST(request: NextRequest) {
         
         const userId = await getUserDataFromToken(request);
 
-        const user = await prisma.userProfile.findFirst({
-            where: {
-                id: userId
-            },
-        });
+        const user = await findUserById(userId);
         if (!user) {
             return NextResponse.json({
                 message: "No user found"
