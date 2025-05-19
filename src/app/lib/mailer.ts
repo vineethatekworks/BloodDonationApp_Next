@@ -27,7 +27,7 @@ export async function sendEmail({ email, emailType, userId }: any) {
                 from: "vineethmargana1617@gmail.com",
                 to: email,
                 subject: `Blood Donation - ${emailType === 'VERIFY' ? 'Verify Your Email' : 'Reset Your Password'}`,
-                text: `Hello, \n\n Please ${emailType === 'VERIFY' ? 'verify' : 'reset your password'} your email by clicking the link below: \n\n http://localhost:3000/${emailType === 'VERIFY' ? 'verify' : 'reset-password'}/${userId} \n\n Thank you!`,
+                text: `Hello, \n\n Please ${emailType === 'VERIFY' ? 'verify' : 'reset your password'} your email by clicking the link below: \n\n http://localhost:3000/${emailType === 'VERIFY' ? 'verify' : 'reset-password'}/${HashToken} \n\n Thank you!`,
             };
 
             const result = await transporter.sendMail(mailOptions);
