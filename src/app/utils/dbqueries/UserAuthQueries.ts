@@ -72,7 +72,7 @@ export async function getUserDataFromToken(req: NextRequest) {
       }
       const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
 
-      return decoded.id;
+      return decoded;
    }
    catch (err: any) {
       console.log(err);

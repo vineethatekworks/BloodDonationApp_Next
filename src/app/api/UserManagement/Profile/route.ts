@@ -7,9 +7,9 @@ import { findUserById } from "@/app/utils/dbqueries/UserProfileQueries";
 export async function POST(request: NextRequest) {
     try{
         
-        const userId = await getUserDataFromToken(request);
+        const userauth = await getUserDataFromToken(request);
 
-        const user = await findUserById(userId);
+        const user = await findUserById(userauth.id);
         if (!user) {
             return NextResponse.json({
                 message: "No user found"
