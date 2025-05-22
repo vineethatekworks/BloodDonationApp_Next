@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { findUserExists } from "@/app/utils/dbqueries/UserProfileQueries";
-
+import { JWTPayload } from "jose";
+import { generateToken } from "@/app/utils/Jwt/JwtUtils";
 
 
 export async function POST(request: NextRequest) {
@@ -27,17 +27,17 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        const tokendata = {
+        const tokendata: JWTPayload = {
             id: user.id,
             name: user.full_name,
             email: user.email,
             role: user.role
         };
-
-        const token = jwt.sign(tokendata, process.env.JWT_SECRET!, {
-            expiresIn: "1d"
-        });
-
+        // Generate JWT token
+        const token = await generateToken(tokendata);
+        console.log("Token generated:", token);
+        
+        // Set the token in the response cookies
         const response = NextResponse.json({
             message: "Login successful",
             status: true,

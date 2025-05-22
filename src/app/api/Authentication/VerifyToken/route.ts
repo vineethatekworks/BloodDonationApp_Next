@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/lib/prisma_client";
 import { verifyToken, verifyTokenAndUpdateUser } from "@/app/utils/dbqueries/UserAuthQueries";
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest) {
     try{
         const body = await request.json();
         const {token} = body;

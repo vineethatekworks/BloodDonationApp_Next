@@ -70,9 +70,14 @@ model BloodRequest {
   BloodRequest_id String        @id @default(uuid())
   recipientId     String
   blood_group     BloodGroup
-  units_needed    Int
+  units           Int           // renamed from units_needed
   reason          String?
-  location        String
+  hospitalName    String
+  hospitalAddress String
+  city            String
+  state           String
+  country         String
+  contactNumber   String
   status          RequestStatus @default(PENDING)
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt
@@ -81,6 +86,7 @@ model BloodRequest {
 
   @@map("blood_request")
 }
+
 
 enum RequestStatus {
   PENDING
