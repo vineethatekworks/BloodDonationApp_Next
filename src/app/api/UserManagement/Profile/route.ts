@@ -4,7 +4,7 @@ import { findUserById } from "@/app/utils/dbqueries/UserProfileQueries";
 
 
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
     try{
         
         const userauth = await getUserDataFromToken(request);
